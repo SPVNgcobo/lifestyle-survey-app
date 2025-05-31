@@ -1,8 +1,12 @@
-
-function showScreen(screen) {
-  document.getElementById('surveyScreen').style.display = screen === 'survey' ? 'block' : 'none';
-  document.getElementById('resultsScreen').style.display = screen === 'results' ? 'block' : 'none';
-  if (screen === 'results') showResults();
+function calculateAge(dob) {
+  const birthDate = new Date(dob);
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
 }
 
 function submitSurvey() {
@@ -13,6 +17,12 @@ function submitSurvey() {
 
   if (!fullname || !email || !contact || !date) {
     alert('Please complete all personal details.');
+    return;
+  }
+
+  const age = calculateAge(date);
+  if (age < 5 || age > 120) {
+    alert('Age must be between 5 and 120 based on your date of birth.');
     return;
   }
 
@@ -37,6 +47,7 @@ function submitSurvey() {
     email,
     contact,
     date,
+    age,
     food,
     ...ratings
   };
@@ -56,31 +67,3 @@ function submitSurvey() {
     alert('Failed to submit. Is the server running?');
   });
 }
-
-function showResults() {
-  fetch('http://127.0.0.1:5000/results')
-    .then(response => response.json())
-    .then(data => {
-      const container = document.getElementById('resultsContent');
-      if (!data || data.total === 0 || data.message === 'No Surveys Available') {
-        container.innerHTML = '<p>No Surveys Available</p>';
-        return;
-      }
-
-      container.innerHTML = `
-        <table>
-          <tr><th>Total Surveys</th><td>${data.total}</td></tr>
-          <tr><th>Average Age</th><td>${data.avg_age}</td></tr>
-          <tr><th>Oldest Participant</th><td>${data.oldest}</td></tr>
-          <tr><th>Youngest Participant</th><td>${data.youngest}</td></tr>
-          <tr><th>% Who Like Pizza</th><td>${data.pizza_percent}%</td></tr>
-          <tr><th>Avg. 'Eat Out' Rating</th><td>${data.eatout_avg}</td></tr>
-        </table>`;
-    })
-    .catch(error => {
-      console.error('Error fetching results:', error);
-      document.getElementById('resultsContent').innerHTML = '<p>Error fetching results.</p>';
-    });
-}
-
-showScreen('survey');
