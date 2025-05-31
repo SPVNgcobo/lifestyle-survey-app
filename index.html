@@ -84,8 +84,22 @@
       </div>
       <div class="form-group"><button onclick="submitSurvey()">Submit</button></div>
     </div>
-    </div>
   </div>
+  <div id="resultsScreen" style="display: none;">
+  <h3>Survey Results Summary</h3>
+  <table>
+    <caption>Please rate your level of agreement on a scale of 1 to 5 with one being strongly agree and five being strongly disagree.</caption>
+    <tbody>
+      <tr><td>Total Surveys Completed:</td><td id="totalSurveys"></td></tr>
+      <tr><td>Average Age:</td><td id="averageAge"></td></tr>
+      <tr><td>Oldest Participant:</td><td id="oldestAge"></td></tr>
+      <tr><td>Youngest Participant:</td><td id="youngestAge"></td></tr>
+      <tr><td>Percentage Who Like Pizza:</td><td id="pizzaPercentage"></td></tr>
+      <tr><td>Average Rating for "Eat Out":</td><td id="eatOutAvg"></td></tr>
+    </tbody>
+  </table>
+  </div>
+</div> 
   <script src="script.js"></script>
 </body>
 </html>
