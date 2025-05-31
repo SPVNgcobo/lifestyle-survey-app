@@ -16,6 +16,7 @@ def init_db():
             email TEXT,
             contact TEXT,
             date TEXT,
+            age INTEGER,
             food TEXT,
             eatout INTEGER,
             movies INTEGER,
@@ -32,10 +33,10 @@ def submit():
     conn = sqlite3.connect('survey.db')
     c = conn.cursor()
     c.execute('''
-        INSERT INTO responses (fullname, email, contact, date, food, eatout, movies, tv, radio)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO responses (fullname, email, contact, date, age, food, eatout, movies, tv, radio)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (
-        data['fullname'], data['email'], data['contact'], data['date'],
+        data['fullname'], data['email'], data['contact'], data['date'], data['age'],
         ', '.join(data['food']),
         data['eatout'], data['movies'], data['tv'], data['radio']
     ))
@@ -55,17 +56,17 @@ def results():
         return jsonify({"message": "No Surveys Available", "data": []})
 
     total = len(rows)
-    contacts = [int(row[3]) for row in rows if str(row[3]).isdigit()]
-    pizza_lovers = sum(['Pizza' in row[5] for row in rows])
-    eatout_avg = round(sum([row[6] for row in rows]) / total, 1)
+    ages = [row[5] for row in rows if isinstance(row[5], int)]
+    pizza_lovers = sum(['Pizza' in row[6] for row in rows])
+    eatout_avg = round(sum([row[7] for row in rows]) / total, 1)
     pizza_percent = round((pizza_lovers / total) * 100, 1)
-    avg_contact = round(sum(contacts) / len(contacts), 1) if contacts else 0
-    oldest = max(contacts) if contacts else 0
-    youngest = min(contacts) if contacts else 0
+    avg_age = round(sum(ages) / len(ages), 1) if ages else 0
+    oldest = max(ages) if ages else 0
+    youngest = min(ages) if ages else 0
 
     summary = {
         "total": total,
-        "avg_age": avg_contact,
+        "avg_age": avg_age,
         "oldest": oldest,
         "youngest": youngest,
         "pizza_percent": pizza_percent,
